@@ -71,7 +71,7 @@ jobs:
       - name: Update Glue job
         run: |
           aws glue update-job --job-name "TestNotebook ETL" --job-update \
-            "Role=AWSGlueServiceRole-TestNotebookCrawler,Command={Name=glueetl,ScriptLocation=s3://samplebuckettest/TestNotebook_${GITHUB_SHA}.py},Connections={Connections=redshift}" \
+            "Role=AWSGlueServiceRole-TestNotebookCrawler,Command={Name=glueetl,ScriptLocation=s3://samplebuckettest/TestNotebook_${GITHUB_SHA}.py}" \
             --region us-east-1
       
       # Remove stored credentials file
