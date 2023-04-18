@@ -31,14 +31,14 @@ jobs:
           pip install nbconvert
       # Convert notebook file to python
       - name: Convert notebook
-        run: jupyter nbconvert --to python FirstNotebook.ipynb
+        run: jupyter nbconvert --to python TestNotebook.ipynb
 
       # Persist python script for use between jobs
       - name: Upload python script
         uses: actions/upload-artifact@v2
         with:
-          name: FirstNotebook.py
-          path: FirstNotebook.py
+          name: TestNotebook.py
+          path: TestNotebook.py
   
   # Upload python script to S3 and update Glue job
   deploy:
@@ -48,15 +48,8 @@ jobs:
       - name: Download python script from build
         uses: actions/download-artifact@v2
         with:
-          name: FirstNotebook.py
-          
-      # Install the AWS CLI
-      - name: Install AWS CLI
-        run: |
-          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install
-          
+          name: TestNotebook.py
+                
       # Set up credentials used by AWS CLI
       - name: Set up AWS credentials
         shell: bash
@@ -72,13 +65,13 @@ jobs:
           
       # Copy the file to the S3 bucket
       - name: Upload to S3
-        run: aws s3 cp FirstNotebook.py s3://${{secrets.S3_BUCKET}}/FirstNotebook_${GITHUB_SHA}.py --region us-east-1
+        run: aws s3 cp TestNotebook.py s3://samplebuckettest/TestNotebook_${GITHUB_SHA}.py --region us-east-1
       
       # Update the Glue job to use the new script
       - name: Update Glue job
         run: |
-          aws glue update-job --job-name "FirstNotebook ETL" --job-update \
-            "Role=AWSGlueServiceRole-FirstNotebookCrawler,Command={Name=glueetl,ScriptLocation=s3://${{secrets.S3_BUCKET}}/FirstNotebook_${GITHUB_SHA}.py},Connections={Connections=redshift}" \
+          aws glue update-job --job-name "TestNotebook ETL" --job-update \
+            "Role=AWSGlueServiceRole-TestNotebookCrawler,Command={Name=glueetl,ScriptLocation=s3://samplebuckettest/TestNotebook_${GITHUB_SHA}.py},Connections={Connections=redshift}" \
             --region us-east-1
       
       # Remove stored credentials file
