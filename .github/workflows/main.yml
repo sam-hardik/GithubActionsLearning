@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: call modular
-        uses: ./.github/modular.yml
+        uses: ./.github/workflows/modular.yml
         
   #     # Set up Python
   #     - name: Set up Python 3.8
