@@ -19,10 +19,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: call modular
-        uses: ./.github/modular_actions/modular
-        with:
-          file: 'modular.yml'
+    
         
   #     # Set up Python
   #     - name: Set up Python 3.8
@@ -83,3 +80,6 @@ jobs:
   #     # Remove stored credentials file
   #     - name: Cleanup
   #       run: rm -rf ~/.aws
+
+  call_work_flow:
+    uses: ./.github/modular_actions/modular.yml
