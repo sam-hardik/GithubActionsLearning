@@ -21,6 +21,8 @@ jobs:
 
       - name: call modular
         uses: ./.github/modular_actions/modular.yml
+        with:
+          file: 'modular.yml'
         
   #     # Set up Python
   #     - name: Set up Python 3.8
