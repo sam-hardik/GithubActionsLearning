@@ -16,10 +16,11 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       - name: call modular
-        uses: ./.github/workflows/modular.yml
+        uses: ./.github/modular_actions/modular.yml
         
   #     # Set up Python
   #     - name: Set up Python 3.8
