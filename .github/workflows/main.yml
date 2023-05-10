@@ -82,4 +82,4 @@ jobs:
   #       run: rm -rf ~/.aws
 
   call_work_flow:
-    uses: ./.github/modular_actions/modular.yml
+    uses: ./.github/modular_actions/modular.yml@v1
