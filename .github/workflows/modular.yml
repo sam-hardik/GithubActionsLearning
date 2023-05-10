@@ -1,0 +1,12 @@
+name: modularize
+
+on:
+  push:
+    branches: [ test ]
+
+jobs:
+  modularize:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hello from modularize file
+        run: echo "Hello There I am modular file"

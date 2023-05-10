@@ -17,63 +17,66 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-        
-      # Set up Python
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.8'
-          
-      # Install nbconvert to convert notebook file to python script
-      - name: Install nbconvert
-        run: |
-          python -m pip install --upgrade pip
-          pip install nbconvert
-      # Convert notebook file to python
-      - name: Convert notebook
-        run: jupyter nbconvert --to python TestNotebook.ipynb
 
-      # Persist python script for use between jobs
-      - name: Upload python script
-        uses: actions/upload-artifact@v2
-        with:
-          name: TestNotebook.py
-          path: TestNotebook.py
-  
-  # Upload python script to S3 and update Glue job
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download python script from build
-        uses: actions/download-artifact@v2
-        with:
-          name: TestNotebook.py
-                
-      # Set up credentials used by AWS CLI
-      - name: Set up AWS credentials
-        shell: bash
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: |
-          mkdir -p ~/.aws
-          touch ~/.aws/credentials
-          echo "[default]
-          aws_access_key_id = $AWS_ACCESS_KEY_ID
-          aws_secret_access_key = $AWS_SECRET_ACCESS_KEY" > ~/.aws/credentials
+      - name: call modular
+        uses: ./.github/modular.yml
+        
+  #     # Set up Python
+  #     - name: Set up Python 3.8
+  #       uses: actions/setup-python@v2
+  #       with:
+  #         python-version: '3.8'
           
-      # Copy the file to the S3 bucket
-      - name: Upload to S3
-        run: aws s3 cp TestNotebook.py s3://samplebuckettest/TestNotebook_${GITHUB_SHA}.py --region us-east-1
+  #     # Install nbconvert to convert notebook file to python script
+  #     - name: Install nbconvert
+  #       run: |
+  #         python -m pip install --upgrade pip
+  #         pip install nbconvert
+  #     # Convert notebook file to python
+  #     - name: Convert notebook
+  #       run: jupyter nbconvert --to python TestNotebook.ipynb
+
+  #     # Persist python script for use between jobs
+  #     - name: Upload python script
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: TestNotebook.py
+  #         path: TestNotebook.py
+  
+  # # Upload python script to S3 and update Glue job
+  # deploy:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Download python script from build
+  #       uses: actions/download-artifact@v2
+  #       with:
+  #         name: TestNotebook.py
+                
+  #     # Set up credentials used by AWS CLI
+  #     - name: Set up AWS credentials
+  #       shell: bash
+  #       env:
+  #         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #       run: |
+  #         mkdir -p ~/.aws
+  #         touch ~/.aws/credentials
+  #         echo "[default]
+  #         aws_access_key_id = $AWS_ACCESS_KEY_ID
+  #         aws_secret_access_key = $AWS_SECRET_ACCESS_KEY" > ~/.aws/credentials
+          
+  #     # Copy the file to the S3 bucket
+  #     - name: Upload to S3
+  #       run: aws s3 cp TestNotebook.py s3://samplebuckettest/TestNotebook_${GITHUB_SHA}.py --region us-east-1
       
-      # Update the Glue job to use the new script
-      - name: Update Glue job
-        run: |
-          aws glue update-job --job-name "TestNotebook ETL" --job-update \
-            "Role=AWSGlueServiceRole-TestNotebookCrawler,Command={Name=glueetl,ScriptLocation=s3://samplebuckettest/TestNotebook_${GITHUB_SHA}.py}" \
-            --region us-east-1
+  #     # Update the Glue job to use the new script
+  #     - name: Update Glue job
+  #       run: |
+  #         aws glue update-job --job-name "TestNotebook ETL" --job-update \
+  #           "Role=AWSGlueServiceRole-TestNotebookCrawler,Command={Name=glueetl,ScriptLocation=s3://samplebuckettest/TestNotebook_${GITHUB_SHA}.py}" \
+  #           --region us-east-1
       
-      # Remove stored credentials file
-      - name: Cleanup
-        run: rm -rf ~/.aws
+  #     # Remove stored credentials file
+  #     - name: Cleanup
+  #       run: rm -rf ~/.aws
