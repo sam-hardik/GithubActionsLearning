@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: call modular
-        uses: ./.github/modular_actions/modular.yml
+        uses: ./.github/modular_actions/modular
         with:
           file: 'modular.yml'
         
