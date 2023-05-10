@@ -1,7 +1,7 @@
 name: modularize
 
 on:
-  workflow_dispatch:
+  workflow_call:
 
 jobs:
   modularize:
